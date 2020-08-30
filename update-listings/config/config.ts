@@ -1,7 +1,7 @@
 import * as Joi from 'joi';
 import * as dotenv from 'dotenv';
 
-import { createSchemaObject } from './utils';
+import { createSchemaObject } from '../helpers/config';
 
 dotenv.config();
 

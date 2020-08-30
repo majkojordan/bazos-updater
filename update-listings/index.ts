@@ -4,6 +4,7 @@ import { launch } from 'puppeteer';
 import addListing from './actions/addListing';
 import addAccessCookie from './actions/addAccessCookie';
 import { sendNotification } from './helpers/utils';
+import deleteListing from './actions/deleteListing';
 
 /*
 TODO:
@@ -41,6 +42,8 @@ const run: AzureFunction = async (context?: Context) => {
     global.log('SMS verification needed. Exiting...');
     return;
   }
+
+  await deleteListing(page, 'HTC');
 
   await addListing(page, {
     category: 'mobil',
