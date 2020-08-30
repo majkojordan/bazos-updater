@@ -1,5 +1,6 @@
+/* eslint-disable */
 declare namespace NodeJS {
-  export interface Global { 
+  export interface Global {
     log?: {
       /**
        * Writes streaming function logs at the default trace level.
@@ -21,6 +22,6 @@ declare namespace NodeJS {
        * Writes to verbose level logging.
        */
       verbose(...args: any[]): void;
-    }
+    };
   }
 }

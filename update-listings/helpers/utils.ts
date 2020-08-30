@@ -1,1 +1,1 @@
-export const sendNotification = (text: string) => console.log(text);
+export const sendNotification = (text: string): void => global.log(text);

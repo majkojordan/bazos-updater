@@ -1,20 +1,23 @@
-import { Page } from "puppeteer";
+import { Page } from 'puppeteer';
 import { strict as assert } from 'assert';
 
-import config from '../config/config'
-import { sendNotification } from "../helpers/utils";
+import config from '../config/config';
+import { sendNotification } from '../helpers/utils';
 
 const { name, email, phoneNumber, password, zipCode } = config;
 
 interface ListingParams {
-  category: string,
-  subCategory: string,
-  title: string,
-  description: string,
-  price: number,
+  category: string;
+  subCategory: string;
+  title: string;
+  description: string;
+  price: number;
 }
 
-const addListing = async (page: Page, { category, subCategory, title, description, price }: ListingParams) => {
+const addListing = async (
+  page: Page,
+  { category, subCategory, title, description, price }: ListingParams,
+): Promise<void> => {
   global.log(`Adding listing: ${title}`);
 
   // go to specific category page
@@ -27,6 +30,7 @@ const addListing = async (page: Page, { category, subCategory, title, descriptio
   } catch (err) {
     if (err instanceof TypeError) {
       // SMS verification needed
+      global.log('SMS verification needed. Exiting...');
       sendNotification('Expired cookie');
       process.exit(0);
     }
@@ -35,24 +39,34 @@ const addListing = async (page: Page, { category, subCategory, title, descriptio
   }
 
   // select sub category
-  const successfulSubCategorySelection = await page.evaluate((label, selector) => {
-    const normalizeStr = str => str.normalize("NFD").replace(/[\u0300-\u036f\s]/g, '').toLocaleLowerCase();
+  const successfulSubCategorySelection = await page.evaluate(
+    (label, selector) => {
+      const normalizeStr = (str: string) =>
+        str
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f\s]/g, '')
+          .toLocaleLowerCase();
 
-    const selectEl = document.querySelector(selector);
-    const normalizedLabel = normalizeStr(label);
+      const selectEl = document.querySelector(selector);
+      const normalizedLabel = normalizeStr(label);
 
-    const optionToSelect = [...selectEl.options].find(option => normalizeStr(option.label) === normalizedLabel);
+      const optionToSelect = [...selectEl.options].find(
+        (option) => normalizeStr(option.label) === normalizedLabel,
+      );
 
-    if (!(optionToSelect && optionToSelect.index)) {
-      return false;
-    }
+      if (!(optionToSelect && optionToSelect.index)) {
+        return false;
+      }
 
-    selectEl.selectedIndex = optionToSelect.index;
-    return true;
-  }, subCategory, subCategorySelectSelector);
+      selectEl.selectedIndex = optionToSelect.index;
+      return true;
+    },
+    subCategory,
+    subCategorySelectSelector,
+  );
 
   assert(successfulSubCategorySelection, new Error('Could not select specified sub category'));
-  
+
   // item info
   await page.type('input[name="nadpis"]', title);
   await page.type('textarea[name="popis"]', description);
@@ -61,7 +75,6 @@ const addListing = async (page: Page, { category, subCategory, title, descriptio
   // TODO - image upload
 
   // contact info
-  global.log(typeof zipCode, typeof name);
   await page.type('input[name="lokalita"]', zipCode);
   await page.type('input[name="jmeno"]', name);
   await page.type('input[name="telefoni"]', phoneNumber);
@@ -70,6 +83,8 @@ const addListing = async (page: Page, { category, subCategory, title, descriptio
 
   // submit
   // await page.click('form[name="formpridani"] input[type=submit]');
-}
+
+  global.log('Added');
+};
 
 export default addListing;

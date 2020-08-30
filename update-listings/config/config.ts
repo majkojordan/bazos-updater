@@ -1,14 +1,16 @@
 import * as Joi from 'joi';
 import * as dotenv from 'dotenv';
 
-import { createSchemaObjects } from './utils';
+import { createSchemaObject } from './utils';
 
 dotenv.config();
 
 const schema = Joi.object({
-  ...createSchemaObjects(['NAME', 'EMAIL', 'PHONE_NUMBER', 'PASSWORD'], Joi.string()),
+  ...createSchemaObject(['NAME', 'EMAIL', 'PHONE_NUMBER', 'PASSWORD'], Joi.string()),
   ZIP_CODE: Joi.string().length(5),
-}).unknown().options({ presence: 'required' });
+})
+  .unknown()
+  .options({ presence: 'required' });
 
 const { error, value } = schema.validate(process.env);
 if (error) {
@@ -21,6 +23,6 @@ const config = {
   phoneNumber: value.PHONE_NUMBER,
   zipCode: value.ZIP_CODE,
   password: value.PASSWORD,
-}
+};
 
 export default config;
