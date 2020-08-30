@@ -6,11 +6,10 @@ import { createSchemaObject } from './utils';
 dotenv.config();
 
 const schema = Joi.object({
-  ...createSchemaObject(['NAME', 'EMAIL', 'PHONE_NUMBER', 'PASSWORD'], Joi.string()),
-  ZIP_CODE: Joi.string().length(5),
-})
-  .unknown()
-  .options({ presence: 'required' });
+  ...createSchemaObject(['NAME', 'EMAIL', 'PHONE_NUMBER', 'PASSWORD'], Joi.string().required()),
+  ZIP_CODE: Joi.string().length(5).required(),
+  COOKIE_VALIDATION_URL: Joi.string().default('https://auto.bazos.sk/pridat-inzerat.php'),
+}).unknown();
 
 const { error, value } = schema.validate(process.env);
 if (error) {
@@ -18,11 +17,14 @@ if (error) {
 }
 
 const config = {
-  name: value.NAME,
-  email: value.EMAIL,
-  phoneNumber: value.PHONE_NUMBER,
-  zipCode: value.ZIP_CODE,
-  password: value.PASSWORD,
+  contactInfo: {
+    name: value.NAME,
+    email: value.EMAIL,
+    phoneNumber: value.PHONE_NUMBER,
+    zipCode: value.ZIP_CODE,
+    password: value.PASSWORD,
+  },
+  cookieValidationUrl: value.COOKIE_VALIDATION_URL,
 };
 
 export default config;

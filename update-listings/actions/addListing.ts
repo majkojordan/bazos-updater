@@ -2,9 +2,6 @@ import { Page } from 'puppeteer';
 import { strict as assert } from 'assert';
 
 import config from '../config/config';
-import { sendNotification } from '../helpers/utils';
-
-const { name, email, phoneNumber, password, zipCode } = config;
 
 interface ListingParams {
   category: string;
@@ -22,21 +19,6 @@ const addListing = async (
 
   // go to specific category page
   await page.goto(`https://${category}.bazos.sk/pridat-inzerat.php`);
-
-  // check if there is a need for SMS verification
-  const subCategorySelectSelector = 'select[name="category"]';
-  try {
-    await page.waitForSelector(subCategorySelectSelector);
-  } catch (err) {
-    if (err instanceof TypeError) {
-      // SMS verification needed
-      global.log('SMS verification needed. Exiting...');
-      sendNotification('Expired cookie');
-      process.exit(0);
-    }
-
-    throw err;
-  }
 
   // select sub category
   const successfulSubCategorySelection = await page.evaluate(
@@ -62,7 +44,7 @@ const addListing = async (
       return true;
     },
     subCategory,
-    subCategorySelectSelector,
+    'select[name="category"]',
   );
 
   assert(successfulSubCategorySelection, new Error('Could not select specified sub category'));
@@ -75,6 +57,8 @@ const addListing = async (
   // TODO - image upload
 
   // contact info
+  const { name, email, phoneNumber, password, zipCode } = config.contactInfo;
+
   await page.type('input[name="lokalita"]', zipCode);
   await page.type('input[name="jmeno"]', name);
   await page.type('input[name="telefoni"]', phoneNumber);

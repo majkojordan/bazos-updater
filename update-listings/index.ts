@@ -1,17 +1,17 @@
 import { AzureFunction, Context } from '@azure/functions';
 import { launch } from 'puppeteer';
 
+import addListing from './actions/addListing';
+import addAccessCookie from './actions/addAccessCookie';
+import { sendNotification } from './helpers/utils';
+
 /*
 TODO:
-  - git
-  - add prettier
   - add listing removal
   - file upload
   - db
-  - whole logic - check if it is possible to add, delete old and add new
+  - whole logic - check if bkod cookie is valid, delete old and add new listing
 */
-
-import addListing from './actions/addListing';
 
 const run: AzureFunction = async (context?: Context) => {
   global.log = context.log;
@@ -25,7 +25,7 @@ const run: AzureFunction = async (context?: Context) => {
   const page = await browser.newPage();
   page.setDefaultTimeout(5000);
 
-  await page.setCookie({
+  const isValidCookie = await addAccessCookie(page, {
     name: 'bkod',
     value: '85UEU0Q4L8',
     domain: '.bazos.sk',
@@ -34,6 +34,13 @@ const run: AzureFunction = async (context?: Context) => {
     httpOnly: false,
     secure: false,
   });
+
+  if (!isValidCookie) {
+    // SMS verification needed
+    sendNotification('Expired cookie');
+    global.log('SMS verification needed. Exiting...');
+    return;
+  }
 
   await addListing(page, {
     category: 'mobil',
