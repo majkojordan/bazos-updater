@@ -17,7 +17,7 @@ if (error) {
 }
 
 const config = {
-  contactInfo: {
+  userInfo: {
     name: value.NAME,
     email: value.EMAIL,
     phoneNumber: value.PHONE_NUMBER,

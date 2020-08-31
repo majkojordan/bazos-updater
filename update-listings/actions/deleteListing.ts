@@ -2,7 +2,7 @@ import { Page, ElementHandle } from 'puppeteer';
 
 import config from '../config/config';
 import { removeEllipsis } from '../helpers/utils';
-import { getElementTextContent } from '../helpers/puppeteer';
+import { getElementTextContent, clickAndNavigate, fillInput } from '../helpers/puppeteer';
 
 const openListing = async (page: Page, title: string): Promise<boolean> => {
   let listingLinks: ElementHandle<Element>[] = [];
@@ -22,7 +22,7 @@ const openListing = async (page: Page, title: string): Promise<boolean> => {
 
     if (matchingLink) {
       // select listing and wait for new page load
-      await Promise.all([page.waitForNavigation(), await matchingLink.click()]);
+      await clickAndNavigate(page, { elementHandle: matchingLink });
       return true;
     }
 
@@ -34,18 +34,20 @@ const openListing = async (page: Page, title: string): Promise<boolean> => {
       return false;
     }
 
-    await Promise.all([page.waitForNavigation(), await nextPageBtn.click()]);
+    await clickAndNavigate(page, { elementHandle: nextPageBtn });
   }
 };
 
 const deleteListing = async (page: Page, title: string): Promise<void> => {
   global.log(`Deleting listing: ${title}`);
 
+  const { email, password } = config.userInfo;
+
   // go to my listings page
   await page.goto('https://www.bazos.sk/moje-inzeraty.php');
 
   // show my listings
-  await page.type('input[name="mail"]', config.contactInfo.email);
+  await fillInput(page, 'input[name="mail"]', email);
   await page.click('form[name="formm"] input[type=submit]');
 
   const listingFound = await openListing(page, title);
@@ -56,7 +58,11 @@ const deleteListing = async (page: Page, title: string): Promise<void> => {
     return;
   }
 
-  // TODO add deletion
+  // delete
+  await clickAndNavigate(page, { selector: 'a[href^="/zmazat/"]' });
+  await fillInput(page, 'input[name="heslobazar"]', password);
+  await clickAndNavigate(page, { selector: 'input[value="Zmazať"]' });
+
   global.log('Deleted');
 };
 

@@ -2,6 +2,7 @@ import { Page } from 'puppeteer';
 import { strict as assert } from 'assert';
 
 import config from '../config/config';
+import { clickAndNavigate, fillInput } from '../helpers/puppeteer';
 
 interface ListingParams {
   category: string;
@@ -32,9 +33,7 @@ const addListing = async (
       const selectEl = document.querySelector(selector);
       const normalizedLabel = normalizeStr(label);
 
-      const optionToSelect = [...selectEl.options].find(
-        (option) => normalizeStr(option.label) === normalizedLabel,
-      );
+      const optionToSelect = [...selectEl.options].find((option) => normalizeStr(option.label) === normalizedLabel);
 
       if (!(optionToSelect && optionToSelect.index)) {
         return false;
@@ -50,23 +49,23 @@ const addListing = async (
   assert(successfulSubCategorySelection, new Error('Could not select specified sub category'));
 
   // item info
-  await page.type('input[name="nadpis"]', title);
-  await page.type('textarea[name="popis"]', description);
-  await page.type('input[name="cena"]', String(price));
+  await fillInput(page, 'input[name="nadpis"]', title);
+  await fillInput(page, 'textarea[name="popis"]', description);
+  await fillInput(page, 'input[name="cena"]', String(price));
 
   // TODO - image upload
 
   // contact info
-  const { name, email, phoneNumber, password, zipCode } = config.contactInfo;
+  const { name, email, phoneNumber, password, zipCode } = config.userInfo;
 
-  await page.type('input[name="lokalita"]', zipCode);
-  await page.type('input[name="jmeno"]', name);
-  await page.type('input[name="telefoni"]', phoneNumber);
-  await page.type('input[name="maili"]', email);
-  await page.type('input[name="heslobazar"]', password);
+  await fillInput(page, 'input[name="lokalita"]', zipCode);
+  await fillInput(page, 'input[name="jmeno"]', name);
+  await fillInput(page, 'input[name="telefoni"]', phoneNumber);
+  await fillInput(page, 'input[name="maili"]', email);
+  await fillInput(page, 'input[name="heslobazar"]', password);
 
   // submit
-  // await page.click('form[name="formpridani"] input[type=submit]');
+  // await clickAndNavigate(page, { selector: 'form[name="formpridani"] input[type=submit]' });
 
   global.log('Added');
 };
