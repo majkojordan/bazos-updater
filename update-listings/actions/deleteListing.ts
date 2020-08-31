@@ -48,7 +48,7 @@ const deleteListing = async (page: Page, title: string): Promise<void> => {
 
   // show my listings
   await fillInput(page, 'input[name="mail"]', email);
-  await page.click('form[name="formm"] input[type=submit]');
+  await clickAndNavigate(page, { selector: 'form[name="formm"] input[type=submit]' });
 
   const listingFound = await openListing(page, title);
 
