@@ -5,13 +5,12 @@ import addListing from './actions/addListing';
 import addAccessCookie from './actions/addAccessCookie';
 import { sendNotification } from './helpers/utils';
 import deleteListing from './actions/deleteListing';
+import config from './config/config';
 
 /*
 TODO:
-  - add listing removal
   - file upload
   - db
-  - whole logic - check if bkod cookie is valid, delete old and add new listing
 */
 
 const run: AzureFunction = async (context?: Context) => {
@@ -19,10 +18,16 @@ const run: AzureFunction = async (context?: Context) => {
 
   global.log('--------Started--------');
 
-  const browser = await launch({
-    headless: false,
-    slowMo: 50, // slow down by 250ms
-  });
+  global.log(config.env);
+
+  const browser = await launch(
+    config.env === 'Development'
+      ? {
+          headless: false,
+          slowMo: 100,
+        }
+      : {},
+  );
   const page = await browser.newPage();
   page.setDefaultTimeout(5000);
 

@@ -7,8 +7,9 @@ dotenv.config();
 
 const schema = Joi.object({
   ...createSchemaObject(['NAME', 'EMAIL', 'PHONE_NUMBER', 'PASSWORD'], Joi.string().required()),
-  ZIP_CODE: Joi.string().length(5).required(),
+  AZURE_FUNCTIONS_ENVIRONMENT: Joi.string().required(),
   COOKIE_VALIDATION_URL: Joi.string().default('https://auto.bazos.sk/pridat-inzerat.php'),
+  ZIP_CODE: Joi.string().length(5).required(),
 }).unknown();
 
 const { error, value } = schema.validate(process.env);
@@ -24,6 +25,7 @@ const config = {
     zipCode: value.ZIP_CODE,
     password: value.PASSWORD,
   },
+  env: value.AZURE_FUNCTIONS_ENVIRONMENT,
   cookieValidationUrl: value.COOKIE_VALIDATION_URL,
 };
 
