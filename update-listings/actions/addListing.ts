@@ -10,11 +10,12 @@ interface ListingParams {
   title: string;
   description: string;
   price: number;
+  imagePaths: string[];
 }
 
 const addListing = async (
   page: Page,
-  { category, subCategory, title, description, price }: ListingParams,
+  { category, subCategory, title, description, price, imagePaths }: ListingParams,
 ): Promise<void> => {
   global.log(`Adding listing: ${title}`);
 
@@ -53,7 +54,9 @@ const addListing = async (
   await fillInput(page, 'textarea[name="popis"]', description);
   await fillInput(page, 'input[name="cena"]', String(price));
 
-  // TODO - image upload
+  // image upload
+  const uploadButton = await page.$('input[type="file"]');
+  await uploadButton.uploadFile(...imagePaths);
 
   // contact info
   const { name, email, phoneNumber, password, zipCode } = config.userInfo;

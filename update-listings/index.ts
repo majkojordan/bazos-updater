@@ -9,8 +9,8 @@ import config from './config/config';
 
 /*
 TODO:
-  - file upload
   - db
+  - multiple listings
 */
 
 const run: AzureFunction = async (context?: Context) => {
@@ -21,7 +21,7 @@ const run: AzureFunction = async (context?: Context) => {
   global.log(config.env);
 
   const browser = await launch(
-    config.env === 'Development'
+    config.env === 'Developmentt'
       ? {
           headless: false,
           slowMo: 100,
@@ -56,6 +56,7 @@ const run: AzureFunction = async (context?: Context) => {
     title: 'HTC',
     description: 'desc',
     price: 100,
+    imagePaths: ['/home/marek/Documents/auto/1.jpg', '/home/marek/Documents/auto/2.jpg'],
   });
 
   await browser.close();
