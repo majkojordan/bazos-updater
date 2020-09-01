@@ -21,7 +21,7 @@ export const downloadFile = async (
   const remotePath = joinPath(remoteFolder, filename);
   const localPath = joinPath(downloadFolder, remotePath);
 
-  global.log.info(`Downloading: ${remotePath}`);
+  global.log.verbose(`Downloading: ${remotePath}`);
 
   await createFolderIfNotExists(dirname(localPath));
   const blockBlobClient = containerClient.getBlockBlobClient(remotePath);
