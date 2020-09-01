@@ -57,9 +57,10 @@ const addListing = async (
   await fillInput(page, 'textarea[name="popis"]', description);
   await fillInput(page, 'input[name="cena"]', String(price));
 
-  // image upload
+  // image upload - trigger old version as it is faster
   if (imagePaths.length) {
-    const uploadButton = await page.$('input[type="file"]');
+    await page.click('a[href="javascript:odstranitdrop()"]');
+    const uploadButton = await page.waitForSelector('input[type="file"][name="souborp[]"]');
     await uploadButton.uploadFile(...imagePaths);
   }
 
