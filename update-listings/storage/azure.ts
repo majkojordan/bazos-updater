@@ -1,7 +1,7 @@
 import { ContainerClient } from '@azure/storage-blob';
 import { join as joinPath, dirname } from 'path';
 
-import { createFolderIfNotExists } from './local';
+import { ensureDir } from 'fs-extra';
 import config from '../config/config';
 import { string } from 'joi';
 
@@ -23,7 +23,7 @@ export const downloadFile = async (
 
   global.log.verbose(`Downloading: ${remotePath}`);
 
-  await createFolderIfNotExists(dirname(localPath));
+  await ensureDir(dirname(localPath));
   const blockBlobClient = containerClient.getBlockBlobClient(remotePath);
   await blockBlobClient.downloadToFile(localPath);
 

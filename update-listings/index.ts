@@ -1,4 +1,5 @@
 import { AzureFunction, Context } from '@azure/functions';
+import { emptyDir } from 'fs-extra';
 import { launch } from 'puppeteer';
 
 import addListing from './actions/addListing';
@@ -9,7 +10,6 @@ import { getLaunchOptions } from './helpers/puppeteer';
 import { sendNotification } from './helpers/utils';
 import { downloadFiles } from './storage/azure';
 import { init as initDb, close as closeDb, getAllItems } from './storage/db';
-import { deleteFiles, deleteFolder } from './storage/local';
 
 const { cookie, baseDownloadFolder } = config;
 
@@ -21,7 +21,6 @@ const run: AzureFunction = async (context?: Context) => {
   const [browser] = await Promise.all([await launch(getLaunchOptions()), initDb()]);
 
   const page = await browser.newPage();
-  page.setDefaultTimeout(5000);
 
   const isValidCookie = await setAccessCookie(
     page,
@@ -57,10 +56,10 @@ const run: AzureFunction = async (context?: Context) => {
       imagePaths,
     });
 
-    await deleteFiles(imagePaths);
+    await emptyDir(baseDownloadFolder);
   }
 
-  await Promise.all([deleteFolder(baseDownloadFolder), browser.close(), closeDb()]);
+  await Promise.all([emptyDir(baseDownloadFolder), browser.close(), closeDb()]);
 
   global.log('--------Successfully executed--------');
 };
