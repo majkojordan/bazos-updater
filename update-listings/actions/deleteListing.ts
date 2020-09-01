@@ -4,6 +4,8 @@ import config from '../config/config';
 import { removeEllipsis } from '../helpers/utils';
 import { getElementTextContent, clickAndNavigate, fillInput } from '../helpers/puppeteer';
 
+const { email, password } = config.userInfo;
+
 const openListing = async (page: Page, title: string): Promise<boolean> => {
   let listingLinks: ElementHandle<Element>[] = [];
   let matchingLink: ElementHandle<Element> = null;
@@ -40,8 +42,6 @@ const openListing = async (page: Page, title: string): Promise<boolean> => {
 
 const deleteListing = async (page: Page, title: string): Promise<void> => {
   global.log(`Deleting listing: ${title}`);
-
-  const { email, password } = config.userInfo;
 
   // go to my listings page
   await page.goto('https://www.bazos.sk/moje-inzeraty.php');

@@ -11,8 +11,10 @@
     "lint": "eslint . --ext .ts"
   },
   "dependencies": {
+    "@azure/storage-blob": "^12.2.0-preview.1",
     "dotenv": "^8.2.0",
     "joi": "^17.2.1",
+    "memfs": "^3.2.0",
     "puppeteer": "^5.2.1"
   },
   "devDependencies": {

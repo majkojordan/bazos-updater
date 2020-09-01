@@ -6,6 +6,8 @@ import addAccessCookie from './actions/addAccessCookie';
 import { sendNotification } from './helpers/utils';
 import deleteListing from './actions/deleteListing';
 import config from './config/config';
+import { downloadFiles } from './storage/azure';
+import { deleteFiles } from './storage/local';
 
 /*
 TODO:
@@ -18,10 +20,8 @@ const run: AzureFunction = async (context?: Context) => {
 
   global.log('--------Started--------');
 
-  global.log(config.env);
-
   const browser = await launch(
-    config.env === 'Developmentt'
+    config.env === 'Development'
       ? {
           headless: false,
           slowMo: 100,
@@ -50,15 +50,19 @@ const run: AzureFunction = async (context?: Context) => {
 
   await deleteListing(page, 'HTC');
 
+  const filenames = ['sample.jpg', '1.jpg', '2.jpg'];
+  const imagePaths = await downloadFiles(filenames);
+
   await addListing(page, {
     category: 'mobil',
     subCategory: 'HTC',
     title: 'HTC',
     description: 'desc',
     price: 100,
-    imagePaths: ['/home/marek/Documents/auto/1.jpg', '/home/marek/Documents/auto/2.jpg'],
+    imagePaths,
   });
 
+  await deleteFiles(imagePaths);
   await browser.close();
 
   global.log('--------Successfully executed--------');

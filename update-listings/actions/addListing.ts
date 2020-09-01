@@ -13,6 +13,9 @@ interface ListingParams {
   imagePaths: string[];
 }
 
+// contact info
+const { name, email, phoneNumber, password, zipCode } = config.userInfo;
+
 const addListing = async (
   page: Page,
   { category, subCategory, title, description, price, imagePaths }: ListingParams,
@@ -57,9 +60,6 @@ const addListing = async (
   // image upload
   const uploadButton = await page.$('input[type="file"]');
   await uploadButton.uploadFile(...imagePaths);
-
-  // contact info
-  const { name, email, phoneNumber, password, zipCode } = config.userInfo;
 
   await fillInput(page, 'input[name="lokalita"]', zipCode);
   await fillInput(page, 'input[name="jmeno"]', name);
