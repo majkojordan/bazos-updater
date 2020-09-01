@@ -1,6 +1,7 @@
 import { Page, SetCookie } from 'puppeteer';
 
-const addAccessCookie = async (page: Page, cookie: SetCookie, validationUrl: string): Promise<boolean> => {
+const setAccessCookie = async (page: Page, cookie: SetCookie, validationUrl: string): Promise<boolean> => {
+  global.log('Setting access cookie');
   await page.setCookie(cookie);
 
   // try to add new listing - form for adding should be displayed
@@ -10,4 +11,4 @@ const addAccessCookie = async (page: Page, cookie: SetCookie, validationUrl: str
   return isValidCookie;
 };
 
-export default addAccessCookie;
+export default setAccessCookie;

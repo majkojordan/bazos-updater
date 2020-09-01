@@ -7,6 +7,10 @@ import { getElementTextContent, clickAndNavigate, fillInput } from '../helpers/p
 const { email, password } = config.userInfo;
 
 const openListing = async (page: Page, title: string): Promise<boolean> => {
+  if (!title) {
+    return false;
+  }
+
   let listingLinks: ElementHandle<Element>[] = [];
   let matchingLink: ElementHandle<Element> = null;
   let nextPageBtn: ElementHandle<Element> = null;
@@ -62,8 +66,6 @@ const deleteListing = async (page: Page, title: string): Promise<void> => {
   await clickAndNavigate(page, { selector: 'a[href^="/zmazat/"]' });
   await fillInput(page, 'input[name="heslobazar"]', password);
   await clickAndNavigate(page, { selector: 'input[value="Zmazať"]' });
-
-  global.log('Deleted');
 };
 
 export default deleteListing;

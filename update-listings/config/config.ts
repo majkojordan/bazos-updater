@@ -22,7 +22,7 @@ const schema = Joi.object({
   ),
   COOKIE_VALIDATION_URL: Joi.string().default('https://auto.bazos.sk/pridat-inzerat.php'),
   DB_ID: Joi.string().default('bazos-updater-db'),
-  DOWNLOAD_FOLDER: Joi.string().default('downloads'),
+  BASE_DOWNLOAD_FOLDER: Joi.string().default('downloads'),
   ZIP_CODE: Joi.string().length(5).required(),
 }).unknown();
 
@@ -51,7 +51,7 @@ const config = {
     value: value.COOKIE_VALUE,
     validationUrl: value.COOKIE_VALIDATION_URL,
   },
-  downloadFolder: value.DOWNLOAD_FOLDER,
+  baseDownloadFolder: value.BASE_DOWNLOAD_FOLDER,
   env: value.AZURE_FUNCTIONS_ENVIRONMENT,
 };
 

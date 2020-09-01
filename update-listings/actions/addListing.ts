@@ -71,8 +71,6 @@ const addListing = async (
 
   // submit
   await clickAndNavigate(page, { selector: 'form[name="formpridani"] input[type=submit]' });
-
-  global.log('Added');
 };
 
 export default addListing;

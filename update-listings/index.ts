@@ -1,36 +1,30 @@
 import { AzureFunction, Context } from '@azure/functions';
 import { launch } from 'puppeteer';
+import { join as joinPath } from 'path';
 
 import addListing from './actions/addListing';
-import addAccessCookie from './actions/addAccessCookie';
+import setAccessCookie from './actions/setAccessCookie';
 import { sendNotification } from './helpers/utils';
 import deleteListing from './actions/deleteListing';
 import config from './config/config';
 import { downloadFiles } from './storage/azure';
-import { deleteFiles } from './storage/local';
-import { init as initDb, getAllItems } from './storage/db';
+import { deleteFiles, deleteFolder } from './storage/local';
+import { init as initDb, close as closeDb, getAllItems } from './storage/db';
+import { getLaunchOptions } from './helpers/puppeteer';
 
-const { env, cookie } = config;
+const { cookie, baseDownloadFolder } = config;
 
 const run: AzureFunction = async (context?: Context) => {
   global.log = context.log;
 
   global.log('--------Started--------');
 
-  await initDb();
+  const [browser] = await Promise.all([await launch(getLaunchOptions()), initDb()]);
 
-  const browser = await launch(
-    env === 'Development'
-      ? {
-          headless: false,
-          slowMo: 100,
-        }
-      : {},
-  );
   const page = await browser.newPage();
   page.setDefaultTimeout(5000);
 
-  const isValidCookie = await addAccessCookie(
+  const isValidCookie = await setAccessCookie(
     page,
     {
       name: 'bkod',
@@ -50,11 +44,14 @@ const run: AzureFunction = async (context?: Context) => {
   }
 
   const listings = await getAllItems('listings');
+  global.log(`Updating ${listings.length} listings`);
 
   for (let listing of listings) {
-    await deleteListing(page, 'HTC');
+    global.log(`Updating listing: ${listing.data?.title}`);
 
-    const imagePaths = await downloadFiles(listing.images);
+    await deleteListing(page, listing.data?.title);
+
+    const imagePaths = await downloadFiles(listing.images, baseDownloadFolder, { remoteFolder: listing.folder });
 
     await addListing(page, {
       ...listing.data,
@@ -64,7 +61,7 @@ const run: AzureFunction = async (context?: Context) => {
     await deleteFiles(imagePaths);
   }
 
-  await browser.close();
+  await Promise.all([deleteFolder(baseDownloadFolder), browser.close(), closeDb()]);
 
   global.log('--------Successfully executed--------');
 };

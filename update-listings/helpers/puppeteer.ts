@@ -1,4 +1,13 @@
 import { Page, ElementHandle } from 'puppeteer';
+import config from '../config/config';
+
+export const getLaunchOptions = () =>
+  config.env === 'Development'
+    ? {
+        headless: false,
+        slowMo: 100,
+      }
+    : {};
 
 export const getElementTextContent = (page: Page, el: ElementHandle<Element>): Promise<string> =>
   page.evaluate((el) => el.textContent, el);
