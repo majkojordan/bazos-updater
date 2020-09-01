@@ -1,16 +1,15 @@
 import { AzureFunction, Context } from '@azure/functions';
 import { launch } from 'puppeteer';
-import { join as joinPath } from 'path';
 
 import addListing from './actions/addListing';
 import setAccessCookie from './actions/setAccessCookie';
-import { sendNotification } from './helpers/utils';
 import deleteListing from './actions/deleteListing';
 import config from './config/config';
-import { downloadFiles } from './storage/azure';
-import { deleteFiles, deleteFolder } from './storage/local';
-import { init as initDb, close as closeDb, getAllItems } from './storage/db';
 import { getLaunchOptions } from './helpers/puppeteer';
+import { sendNotification } from './helpers/utils';
+import { downloadFiles } from './storage/azure';
+import { init as initDb, close as closeDb, getAllItems } from './storage/db';
+import { deleteFiles, deleteFolder } from './storage/local';
 
 const { cookie, baseDownloadFolder } = config;
 

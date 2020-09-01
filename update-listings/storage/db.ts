@@ -1,8 +1,4 @@
 import { MongoClient, Db } from 'mongodb';
-// var assert = require('assert');
-// var ObjectId = require('mongodb').ObjectID;
-// var url = 'mongodb://<username>:<password>@<endpoint>.documents.azure.com:10255/?ssl=true';
-
 import config from '../config/config';
 
 const { connectionString, id: dbId } = config.db;
