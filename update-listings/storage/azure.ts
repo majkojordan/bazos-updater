@@ -4,28 +4,22 @@ import * as path from 'path';
 import { createFolderIfNotExists } from './local';
 import config from '../config/config';
 
-let containerClient = null;
 const {
   blobStorage: { connectionString, containerName },
   downloadFolder,
 } = config;
 
-export const getContainerClient = async (): Promise<ContainerClient> => {
-  if (!containerClient) {
-    containerClient = new ContainerClient(connectionString, containerName);
-  }
-
-  return containerClient;
-};
+const containerClient = new ContainerClient(connectionString, containerName);
 
 export const downloadFile = async (filename: string) => {
   const downloadPath = path.join(downloadFolder, filename);
 
   await createFolderIfNotExists(downloadFolder);
-  const blockBlobClient = (await getContainerClient()).getBlockBlobClient(filename);
+  const blockBlobClient = containerClient.getBlockBlobClient(filename);
   await blockBlobClient.downloadToFile(downloadPath);
 
   return downloadPath;
 };
 
-export const downloadFiles = async (filenames: string[]) => Promise.all(filenames.map((name) => downloadFile(name)));
+export const downloadFiles = async (filenames: string[] = []) =>
+  Promise.all(filenames.map((name) => downloadFile(name)));

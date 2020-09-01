@@ -10,7 +10,7 @@ interface ListingParams {
   title: string;
   description: string;
   price: number;
-  imagePaths: string[];
+  imagePaths?: string[];
 }
 
 // contact info
@@ -18,7 +18,7 @@ const { name, email, phoneNumber, password, zipCode } = config.userInfo;
 
 const addListing = async (
   page: Page,
-  { category, subCategory, title, description, price, imagePaths }: ListingParams,
+  { category, subCategory, title, description, price, imagePaths = [] }: ListingParams,
 ): Promise<void> => {
   global.log(`Adding listing: ${title}`);
 
@@ -58,8 +58,10 @@ const addListing = async (
   await fillInput(page, 'input[name="cena"]', String(price));
 
   // image upload
-  const uploadButton = await page.$('input[type="file"]');
-  await uploadButton.uploadFile(...imagePaths);
+  if (imagePaths.length) {
+    const uploadButton = await page.$('input[type="file"]');
+    await uploadButton.uploadFile(...imagePaths);
+  }
 
   await fillInput(page, 'input[name="lokalita"]', zipCode);
   await fillInput(page, 'input[name="jmeno"]', name);
@@ -68,7 +70,7 @@ const addListing = async (
   await fillInput(page, 'input[name="heslobazar"]', password);
 
   // submit
-  // await clickAndNavigate(page, { selector: 'form[name="formpridani"] input[type=submit]' });
+  await clickAndNavigate(page, { selector: 'form[name="formpridani"] input[type=submit]' });
 
   global.log('Added');
 };

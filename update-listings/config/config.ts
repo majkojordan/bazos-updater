@@ -15,10 +15,13 @@ const schema = Joi.object({
       'AZURE_FUNCTIONS_ENVIRONMENT',
       'BLOB_STORAGE_CONNECTION_STRING',
       'BLOB_STORAGE_CONTAINER_NAME',
+      'DB_CONNECTION_STRING',
+      'COOKIE_VALUE',
     ],
     Joi.string().required(),
   ),
   COOKIE_VALIDATION_URL: Joi.string().default('https://auto.bazos.sk/pridat-inzerat.php'),
+  DB_ID: Joi.string().default('bazos-updater-db'),
   DOWNLOAD_FOLDER: Joi.string().default('downloads'),
   ZIP_CODE: Joi.string().length(5).required(),
 }).unknown();
@@ -33,6 +36,10 @@ const config = {
     connectionString: value.BLOB_STORAGE_CONNECTION_STRING,
     containerName: value.BLOB_STORAGE_CONTAINER_NAME,
   },
+  db: {
+    connectionString: value.DB_CONNECTION_STRING,
+    id: value.DB_ID,
+  },
   userInfo: {
     name: value.NAME,
     email: value.EMAIL,
@@ -40,7 +47,10 @@ const config = {
     zipCode: value.ZIP_CODE,
     password: value.PASSWORD,
   },
-  cookieValidationUrl: value.COOKIE_VALIDATION_URL,
+  cookie: {
+    value: value.COOKIE_VALUE,
+    validationUrl: value.COOKIE_VALIDATION_URL,
+  },
   downloadFolder: value.DOWNLOAD_FOLDER,
   env: value.AZURE_FUNCTIONS_ENVIRONMENT,
 };
