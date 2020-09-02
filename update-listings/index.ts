@@ -26,7 +26,7 @@ const run: AzureFunction = async (context?: Context) => {
     page,
     {
       name: 'bkod',
-      value: cookie.value,
+      value: cookie.bkod,
       domain: '.bazos.sk',
       url: 'https://www.bazos.sk/',
       path: '/',

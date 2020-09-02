@@ -15,7 +15,7 @@ const schema = Joi.object({
       'BLOB_STORAGE_CONNECTION_STRING',
       'BLOB_STORAGE_CONTAINER_NAME',
       'DB_CONNECTION_STRING',
-      'COOKIE_VALUE',
+      'COOKIE_BKOD',
     ],
     Joi.string().required(),
   ),
@@ -48,7 +48,7 @@ const config = {
     password: value.USER_INFO_PASSWORD,
   },
   cookie: {
-    value: value.COOKIE_VALUE,
+    bkod: value.COOKIE_BKOD,
     validationUrl: value.COOKIE_VALIDATION_URL,
   },
   baseDownloadFolder: value.BASE_DOWNLOAD_FOLDER,
