@@ -42,7 +42,38 @@ Some variables are needed for app to run properly, others are optional but may a
 
 - `AZURE_FUNCTIONS_ENVIRONMENT`: developement environment
 - `COOKIE_VALIDATION_URL`: URL used to validate that `COOKIE_BKOD` value is valid
-- `DB_NAME`: name of the Azure Cosmos Db database
+- `DB_NAME`: name of the Azure Cosmos Db
+- `DB_COLLECTION`: name of the collection where data is stored in Azure Cosmos Db
 - `BASE_DOWNLOAD_FOLDER`: folder where downloads are saved (in Azure it has to be path in tmp folder i.e. /tmp/ in Linux)
 
 ## Data
+
+Currently there is no frontend nor API that allows adding data, so data have to be fed manually into storage (listing pictures) and DB (listing data).
+
+### Storage - stores listing pictures
+
+Listing pictures are stored in Azure gereral purpose storagev2 in Blob Container:
+
+1. Create a Blob Container
+1. Upload pictures. Folders inside containers are also supported, so you may choose to upload to folder.
+
+### DB - stores listing data
+
+1. Create new Database
+1. Create new Collection inside Database
+1. Add document in the following format for each listing:
+
+   ```ts
+   {
+      id: string; // "1"
+      images?: string[]; // ["img1.jpg", "img2.jpg"] - OPTIONAL, should match the name of the images stored in Azure Storage
+      folder?: string; // "car" - OPTIONAL, should match the folder where images are saved in Azure Storage
+      data: {
+         category: string; // "cars" - should match existing bazos category (check first part of URL of desired category).
+         subCategory: string; // "Audi" - should match existing bazos subcategory (check category dropdown in selected category)
+         title: string; // "my Audi"
+         description: string; // "I'm selling this Audi..." - new lines should be replaced by \n characters
+         price: number; // 1000
+      };
+   }
+   ```

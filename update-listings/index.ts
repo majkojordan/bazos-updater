@@ -9,7 +9,7 @@ import config from './config/config';
 import { getLaunchOptions } from './helpers/puppeteer';
 import { sendNotification } from './helpers/utils';
 import { downloadFiles } from './storage/azure';
-import { init as initDb, close as closeDb, getAllItems } from './storage/db';
+import { init as initDb, close as closeDb, getAllListings } from './storage/db';
 
 const { cookie, baseDownloadFolder } = config;
 
@@ -41,7 +41,7 @@ const run: AzureFunction = async (context?: Context) => {
     return;
   }
 
-  const listings = await getAllItems('listings');
+  const listings = await getAllListings();
   global.log(`Updating ${listings.length} listings`);
 
   for (let listing of listings) {

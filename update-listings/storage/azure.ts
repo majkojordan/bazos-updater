@@ -3,7 +3,6 @@ import { join as joinPath, dirname } from 'path';
 
 import { ensureDir } from 'fs-extra';
 import config from '../config/config';
-import { string } from 'joi';
 
 interface DownloadOptions {
   remoteFolder?: string;

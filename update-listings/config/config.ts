@@ -22,6 +22,7 @@ const schema = Joi.object({
   AZURE_FUNCTIONS_ENVIRONMENT: Joi.string().valid('Development', 'Test', 'Production').default('Development'),
   COOKIE_VALIDATION_URL: Joi.string().default('https://auto.bazos.sk/pridat-inzerat.php'),
   DB_NAME: Joi.string().default('bazos-updater-db'),
+  DB_COLLECTION: Joi.string().default('listings'),
   BASE_DOWNLOAD_FOLDER: Joi.string().default('/tmp/downloads'),
   USER_INFO_ZIP_CODE: Joi.string().length(5).required(),
 }).unknown();
@@ -39,6 +40,7 @@ const config = {
   db: {
     connectionString: value.DB_CONNECTION_STRING,
     name: value.DB_NAME,
+    collection: value.DB_COLLECTION,
   },
   userInfo: {
     name: value.USER_INFO_NAME,
